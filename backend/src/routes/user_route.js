@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.send("Hello this is message from API localhost:5000/example!");
+  res.send("Hello this is message from API localhost:5000/user!");
 });
 
 export default router;

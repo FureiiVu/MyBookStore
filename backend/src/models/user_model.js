@@ -15,14 +15,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields
   }
 );
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;
