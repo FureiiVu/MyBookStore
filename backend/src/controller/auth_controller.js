@@ -1,6 +1,6 @@
 import User from "../models/user_model.js";
 
-export const authController = async (req, res) => {
+export const authController = async (req, res, next) => {
   try {
     const { id, firstName, lastName, imageUrl } = req.body;
 
@@ -17,8 +17,6 @@ export const authController = async (req, res) => {
     }
   } catch (error) {
     console.error("Error in /auth/callback:", error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
+    next(error);
   }
 };

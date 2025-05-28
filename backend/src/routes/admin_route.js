@@ -3,11 +3,10 @@ import {
   requireLoggedIn,
   requireAdmin,
 } from "../middleware/auth_middleware.js";
+import { createBook } from "../controller/admin_controller.js";
 
 const router = Router();
 
-router.get("/", requireLoggedIn, requireAdmin, (req, res) => {
-  res.send("Hello this is message from API localhost:5000/admin!");
-});
+router.post("/newbook", requireLoggedIn, requireAdmin, createBook);
 
 export default router;

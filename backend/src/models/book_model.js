@@ -7,7 +7,6 @@ const bookSchema = new mongoose.Schema(
     description: { type: String, required: true },
     category: { type: String, required: true },
     price: { type: Number, required: true },
-    discount: { type: Number, default: 0 },
     publisher: { type: String, required: true },
     publishDate: { type: Date, required: true },
     language: { type: String, required: true },
@@ -15,8 +14,8 @@ const bookSchema = new mongoose.Schema(
     stock: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
-    coverImage: { type: String, required: true },
-    images: [{ type: String, required: true }],
+    coverImageUrl: { type: String, required: true },
+    imageUrls: [{ type: String, required: true }],
   },
   { timestamps: true }
 );
