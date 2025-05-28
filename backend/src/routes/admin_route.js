@@ -7,6 +7,6 @@ import { createBook } from "../controller/admin_controller.js";
 
 const router = Router();
 
-router.post("/newbook", requireLoggedIn, requireAdmin, createBook);
+router.post("/book", requireLoggedIn, requireAdmin, createBook);
 
 export default router;

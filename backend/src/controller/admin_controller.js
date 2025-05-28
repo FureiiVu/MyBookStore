@@ -16,7 +16,7 @@ const handleUploadImage = async (file) => {
 
 export const createBook = async (req, res, next) => {
   try {
-    if (!req.files || !req.files.imageFile) {
+    if (!req.files || !req.files.imageFile || !req.files.images) {
       return res
         .status(400)
         .json({ message: "No file uploaded, please upload all files" });
@@ -38,10 +38,11 @@ export const createBook = async (req, res, next) => {
     } = req.body;
     const coverImage = req.files.imageFile;
     const images = req.files.images;
+    const imageArray = Array.isArray(images) ? images : [images]; //Make sure images is an array
 
     const coverImageUrl = await handleUploadImage(coverImage);
     const imageUrls = await Promise.all(
-      images.map((image) => handleUploadImage(image))
+      imageArray.map((image) => handleUploadImage(image))
     );
 
     const book = new Book({
@@ -63,7 +64,7 @@ export const createBook = async (req, res, next) => {
 
     await book.save();
   } catch (error) {
-    console.error("Error in /admin/newbook:", error);
+    console.error("Error in /admin/book:", error);
     next(error);
   }
 };
