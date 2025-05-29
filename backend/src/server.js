@@ -10,6 +10,7 @@ import authRoute from "./routes/auth_route.js";
 import adminRoute from "./routes/admin_route.js";
 import bookRoute from "./routes/book_route.js";
 import cartRoute from "./routes/cart_route.js";
+import orderRoute from "./routes/order_route.js";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
 app.use("/book", bookRoute);
 app.use("/cart", cartRoute);
+app.use("/order", orderRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
