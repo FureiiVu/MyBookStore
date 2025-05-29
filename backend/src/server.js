@@ -11,6 +11,7 @@ import adminRoute from "./routes/admin_route.js";
 import bookRoute from "./routes/book_route.js";
 import cartRoute from "./routes/cart_route.js";
 import orderRoute from "./routes/order_route.js";
+import reviewRoute from "./routes/review_route.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/admin", adminRoute);
 app.use("/book", bookRoute);
 app.use("/cart", cartRoute);
 app.use("/order", orderRoute);
+app.use("/review", reviewRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

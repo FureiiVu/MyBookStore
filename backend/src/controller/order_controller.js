@@ -1,12 +1,12 @@
-import { User } from "@clerk/express";
 import Order from "../models/order_model.js";
 import User from "../models/user_model.js";
 import Book from "../models/book_model.js";
 
 export const getOrderByUserId = async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
-    const orders = await Order.find({ user: userId }).populate(
+    const userClerkId = req.auth.userId;
+    const user = await User.findOne({ clerkId: userClerkId });
+    const orders = await Order.find({ user: user._id }).populate(
       "orderItems.book",
       "title coverImageUrl price"
     );
