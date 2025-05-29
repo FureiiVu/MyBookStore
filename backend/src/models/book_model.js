@@ -12,8 +12,6 @@ const bookSchema = new mongoose.Schema(
     language: { type: String, required: true },
     pages: { type: Number, required: true },
     stock: { type: Number, default: 0 },
-    rating: { type: Number, default: 0 },
-    numReviews: { type: Number, default: 0 },
     coverImageUrl: { type: String, required: true },
     imageUrls: [{ type: String, required: true }],
   },

@@ -1,9 +1,19 @@
 import { Router } from "express";
 
+import {
+  getAllUsers,
+  getUserById,
+  updateUser,
+} from "../controller/user_controller.js";
+import {
+  requireLoggedIn,
+  requireAdmin,
+} from "../middleware/auth_middleware.js";
+
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send("Hello this is message from API localhost:5000/user!");
-});
+router.get("/", requireLoggedIn, requireAdmin, getAllUsers);
+router.get("/me", requireLoggedIn, getUserById);
+router.put("/me", requireLoggedIn, updateUser);
 
 export default router;

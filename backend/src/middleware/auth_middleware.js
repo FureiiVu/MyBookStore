@@ -4,7 +4,7 @@ export const requireLoggedIn = (req, res, next) => {
   if (!req.auth || !req.auth.userId) {
     return res
       .status(401)
-      .json({ error: "Unauthorized - You must be logged in" });
+      .json({ message: "Unauthorized - You must be logged in" });
   }
   next();
 };
@@ -18,13 +18,11 @@ export const requireAdmin = async (req, res, next) => {
     if (!isAdmin) {
       return res
         .status(403)
-        .json({ error: "Forbidden - You do not have admin access" });
+        .json({ message: "Forbidden - You do not have admin access" });
     }
 
     next();
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: "Internal server error", message: error.message });
+    next(error);
   }
 };

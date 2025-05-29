@@ -13,7 +13,7 @@ export const authController = async (req, res, next) => {
         imageUrl,
         clerkId: id,
       });
-      return res.status(201).json({ success: true, user: newUser });
+      return res.status(200).json({ success: true, user: newUser });
     }
   } catch (error) {
     console.error("Error in /auth/callback:", error);

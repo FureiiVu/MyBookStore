@@ -8,6 +8,7 @@ import { connectDB } from "./lib/db.js";
 import userRoute from "./routes/user_route.js";
 import authRoute from "./routes/auth_route.js";
 import adminRoute from "./routes/admin_route.js";
+import bookRoute from "./routes/book_route.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use(
 app.use("/user", userRoute);
 app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
+app.use("/book", bookRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

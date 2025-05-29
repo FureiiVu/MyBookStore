@@ -1,18 +1,5 @@
-import cloudinary from "../lib/cloudinary";
-import Book from "../models/book.js";
-import cloudinary from "../lib/cloudinary.js";
-
-const handleUploadImage = async (file) => {
-  try {
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
-      resource_type: "auto",
-    });
-    return result.secure_url;
-  } catch (error) {
-    console.error("Error uploading an image to cloudinary:", error);
-    throw new Error("Error uploading an image to cloudinary");
-  }
-};
+import Book from "../models/book_model.js";
+import { handleUploadImage } from "../middleware/uploadFile_middleware.js";
 
 export const createBook = async (req, res, next) => {
   try {
@@ -33,8 +20,6 @@ export const createBook = async (req, res, next) => {
       language,
       pages,
       stock,
-      rating,
-      numReviews,
     } = req.body;
     const coverImage = req.files.imageFile;
     const images = req.files.images;
@@ -56,15 +41,38 @@ export const createBook = async (req, res, next) => {
       language,
       pages,
       stock,
-      rating,
-      numReviews,
       coverImageUrl,
       imageUrls,
     });
 
     await book.save();
+    res.status(200).json({
+      message: "Book created successfully",
+      book: book,
+    });
   } catch (error) {
     console.error("Error in /admin/book:", error);
     next(error);
   }
+};
+
+export const deleteBook = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const book = await Book.findById(id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    await Book.findByIdAndDelete(id);
+    res.status(200).json({ message: `Book id ${id} deleted successfully` });
+  } catch (error) {
+    console.error("Error in /admin/book/:id:", error);
+    next(error);
+  }
+};
+
+export const checkAdmin = (req, res) => {
+  res.status(200).json({ admin: true });
 };
