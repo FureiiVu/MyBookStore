@@ -6,10 +6,7 @@ export const getOrderByUserId = async (req, res, next) => {
   try {
     const userClerkId = req.auth.userId;
     const user = await User.findOne({ clerkId: userClerkId });
-    const orders = await Order.find({ user: user._id }).populate(
-      "orderItems.book",
-      "title coverImageUrl price"
-    );
+    const orders = await Order.find({ user: user._id });
     res.status(200).json({ orders });
   } catch (error) {
     console.error("Error in /order:", error);
@@ -48,6 +45,8 @@ export const createOrder = async (req, res, next) => {
         book: book._id,
         quantity: item.quantity,
         price: book.price, // Đơn giá gốc từ DB
+        title: book.title,
+        coverImage: book.coverImageUrl,
       });
     }
 

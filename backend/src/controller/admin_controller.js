@@ -1,6 +1,8 @@
 import Book from "../models/book_model.js";
 import User from "../models/user_model.js";
 import Order from "../models/order_model.js";
+import Review from "../models/review_model.js";
+import Cart from "../models/cart_model.js";
 import { handleUploadImage } from "../middleware/uploadFile_middleware.js";
 
 export const createBook = async (req, res, next) => {
@@ -110,8 +112,15 @@ export const deleteBook = async (req, res, next) => {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    await Book.findByIdAndDelete(id);
-    res.status(200).json({ message: `Book id ${id} deleted successfully` });
+    await Promise.all([
+      await Book.findByIdAndDelete(id),
+      await Review.deleteMany({ book: book._id }), // Delete all reviews associated with the book
+      await Cart.updateMany({}, { $pull: { items: { book: id } } }), // Remove book from all carts
+    ]);
+
+    res
+      .status(200)
+      .json({ message: `Book id ${id} deleted successfully`, book: book });
   } catch (error) {
     console.error("Error in /admin/book/:id:", error);
     next(error);
@@ -153,10 +162,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find().populate(
-      "orderItems.book",
-      "title price"
-    );
+    const orders = await Order.find();
     res.status(200).json({ orders });
   } catch (error) {
     console.error("Error in /admin/orders:", error);
