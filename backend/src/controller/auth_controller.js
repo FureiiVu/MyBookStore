@@ -18,7 +18,7 @@ export const authController = async (req, res, next) => {
 
     return res.status(200).json({ success: true, user });
   } catch (error) {
-    console.error("Error in /auth/callback:", error);
+    console.error("Error in Auth Controller:", error);
     next(error);
   }
 };

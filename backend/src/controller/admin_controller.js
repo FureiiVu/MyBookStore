@@ -55,7 +55,7 @@ export const createBook = async (req, res, next) => {
       book: book,
     });
   } catch (error) {
-    console.error("Error in /admin/book:", error);
+    console.error("Error in creating book:", error);
     next(error);
   }
 };
@@ -98,7 +98,7 @@ export const updateBook = async (req, res, next) => {
 
     res.status(200).json(updatedBook);
   } catch (error) {
-    console.error("Error in /admin/book/:id:", error);
+    console.error("Error in updating book:", error);
     next(error);
   }
 };
@@ -122,7 +122,7 @@ export const deleteBook = async (req, res, next) => {
       .status(200)
       .json({ message: `Book id ${id} deleted successfully`, book: book });
   } catch (error) {
-    console.error("Error in /admin/book/:id:", error);
+    console.error("Error in deleting book:", error);
     next(error);
   }
 };
@@ -136,7 +136,7 @@ export const getUsers = async (req, res, next) => {
     const users = await User.find();
     res.status(200).json({ users });
   } catch (error) {
-    console.error("Error in /admin/users:", error);
+    console.error("Error in getting users:", error);
     next(error);
   }
 };
@@ -150,12 +150,19 @@ export const deleteUser = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await User.findByIdAndDelete(id);
-    res
-      .status(200)
-      .json({ message: `User id ${id} deleted successfully`, user: user });
+    await Promise.all([
+      User.findByIdAndDelete(id),
+      Cart.findOneAndDelete({ user: id }),
+      Order.deleteMany({ user: id }),
+      Review.deleteMany({ user: id }),
+    ]);
+
+    res.status(200).json({
+      message: `User id ${id} and associated data deleted successfully`,
+      user,
+    });
   } catch (error) {
-    console.error("Error in /admin/users/:id:", error);
+    console.error("Error in deleting user:", error);
     next(error);
   }
 };
@@ -165,7 +172,7 @@ export const getOrders = async (req, res, next) => {
     const orders = await Order.find();
     res.status(200).json({ orders });
   } catch (error) {
-    console.error("Error in /admin/orders:", error);
+    console.error("Error in getting orders:", error);
     next(error);
   }
 };
@@ -182,7 +189,7 @@ export const deleteOrder = async (req, res, next) => {
       .status(200)
       .json({ message: `Order id ${id} deleted successfully`, order: order });
   } catch (error) {
-    console.error("Error in /admin/orders/delete:", error);
+    console.error("Error in deleting order:", error);
     next(error);
   }
 };

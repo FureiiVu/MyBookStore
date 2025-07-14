@@ -6,6 +6,7 @@ export const getAllUsers = async (req, res, next) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
+    console.error("Error in getting all users:", error);
     next(error);
   }
 };
@@ -13,9 +14,17 @@ export const getAllUsers = async (req, res, next) => {
 export const getUserById = async (req, res, next) => {
   try {
     const currentUserId = req.auth.userId;
-    const user = await User.find({ clerkId: currentUserId });
+    const user = await User.findOne({ clerkId: currentUserId });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "Error in getting user by ID: User not found" });
+    }
+
     res.status(200).json(user);
   } catch (error) {
+    console.error("Error in getting user by ID:", error);
     next(error);
   }
 };
@@ -25,27 +34,41 @@ export const updateUser = async (req, res, next) => {
     const currentUserId = req.auth.userId;
     const currentUser = await User.findOne({ clerkId: currentUserId });
 
-    const { name } = req.body;
-    const userIcon =
-      req.files && req.files.imageFile ? req.files.imageFile : null;
-    const userIconUrl = userIcon
-      ? await handleUploadImage(userIcon)
-      : currentUser.imageUrl;
+    if (!currentUser) {
+      return res
+        .status(404)
+        .json({ message: "Error in updating user: User not found" });
+    }
 
-    const newUser = await User.findOneAndUpdate(
+    const { name } = req.body;
+
+    let userIconUrl = currentUser.imageUrl;
+    if (req.files && req.files.imageFile) {
+      const imageFile = Array.isArray(req.files.imageFile)
+        ? req.files.imageFile[0]
+        : req.files.imageFile;
+
+      if (imageFile) {
+        userIconUrl = await handleUploadImage(imageFile);
+      }
+    }
+
+    const updatedFields = {};
+    if (name) updatedFields.name = name;
+    if (userIconUrl) updatedFields.imageUrl = userIconUrl;
+
+    const updatedUser = await User.findOneAndUpdate(
       { clerkId: currentUserId },
-      {
-        name,
-        imageUrl: userIconUrl,
-      },
+      updatedFields,
       { new: true, runValidators: true }
     );
 
     res.status(200).json({
       message: "User updated successfully",
-      user: newUser,
+      user: updatedUser,
     });
   } catch (error) {
+    console.error("Error in updating user:", error);
     next(error);
   }
 };

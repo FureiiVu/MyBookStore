@@ -5,6 +5,7 @@ export const getAllBooks = async (req, res, next) => {
     const books = await Book.find();
     res.status(200).json(books);
   } catch (error) {
+    console.log("Error in getting all books:", error);
     next(error);
   }
 };
@@ -20,6 +21,7 @@ export const getBookById = async (req, res, next) => {
 
     res.status(200).json(book);
   } catch (error) {
+    console.error("Error in getting book by ID:", error);
     next(error);
   }
 };
