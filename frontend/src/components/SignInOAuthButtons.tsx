@@ -20,10 +20,7 @@ const SignInOAuthButtons = () => {
     <Button
       onClick={signInWithGoogle}
       variant={"secondary"}
-      className="w-full text-white h-11"
-      style={{
-        backgroundColor: "#3333CC",
-      }}
+      className="text-white h-11 bg-[#3333CC] hover:bg-blue-900 transition-colors"
     >
       Continue with Google
     </Button>

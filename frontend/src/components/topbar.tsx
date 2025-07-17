@@ -9,7 +9,7 @@ export default function Topbar() {
   const isAdmin = false;
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto flex items-center gap-6 p-4 sticky top-0 bg-white z-10">
+    <div className="w-full mx-auto flex items-center gap-6 p-4 sticky top-0 bg-white z-10">
       {/* Logo and Store Name */}
       <Link to="/">
         <div className="flex items-center gap-2 flex-shrink-0">
