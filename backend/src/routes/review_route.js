@@ -15,13 +15,13 @@ import {
 
 const router = Router();
 
-router.get("/", requireLoggedIn, requireAdmin, getAllReviews);
-router.get("/book/:bookId", requireLoggedIn, getReviewByBookId);
-router.post("/:reviewId", requireLoggedIn, createReview);
-router.put("/:reviewId", requireLoggedIn, updateReview);
-router.delete("/:reviewId", requireLoggedIn, deleteReviewById);
+router.get("/reviews", requireLoggedIn, requireAdmin, getAllReviews);
+router.get("/reviews/:bookId", requireLoggedIn, getReviewByBookId);
+router.post("/reviews", requireLoggedIn, createReview);
+router.put("/reviews/:reviewId", requireLoggedIn, updateReview);
+router.delete("/reviews/:reviewId", requireLoggedIn, deleteReviewById);
 router.delete(
-  "/book/:bookId",
+  "/reviews/:bookId",
   requireLoggedIn,
   requireAdmin,
   deleteReviewByBookId

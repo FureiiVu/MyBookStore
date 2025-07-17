@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-router.get("/", requireLoggedIn, getOrderByUserId);
-router.post("/", requireLoggedIn, createOrder);
+router.get("/orders", requireLoggedIn, getOrderByUserId);
+router.post("/orders", requireLoggedIn, createOrder);
 
 export default router;

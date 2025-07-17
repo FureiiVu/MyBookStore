@@ -9,9 +9,9 @@ import {
 
 const router = Router();
 
-router.get("/", requireLoggedIn, getCartItems);
-router.post("/update", requireLoggedIn, addToCart);
-router.delete("/remove/:id", requireLoggedIn, removeCartItem);
-router.delete("/remove", requireLoggedIn, removeAllCartItem);
+router.get("/cart", requireLoggedIn, getCartItems);
+router.post("/cart/update", requireLoggedIn, addToCart);
+router.delete("/cart/:id", requireLoggedIn, removeCartItem);
+router.delete("/cart", requireLoggedIn, removeAllCartItem);
 
 export default router;
