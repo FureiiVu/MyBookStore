@@ -13,7 +13,7 @@ import {
 const router = Router();
 
 router.get("/", requireLoggedIn, requireAdmin, getAllUsers);
-router.get("/me", requireLoggedIn, getUserById);
-router.put("/me", requireLoggedIn, updateUser);
+router.get("/:id", requireLoggedIn, getUserById);
+router.put("/:id", requireLoggedIn, updateUser);
 
 export default router;

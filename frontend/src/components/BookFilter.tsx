@@ -3,7 +3,9 @@ import { useState } from "react";
 
 const BookFilter = () => {
   const [maxPrice, setMaxPrice] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+
+  console.log("Check selectedCategory:", selectedCategory);
 
   const categories = [
     "Tiểu thuyết",
@@ -12,6 +14,14 @@ const BookFilter = () => {
     "Sách truyền cảm hứng",
     "Sách bổ sung kiến thức",
   ];
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
 
   const formatNumber = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
@@ -39,12 +49,11 @@ const BookFilter = () => {
         {categories.map((category) => (
           <label key={category} className="flex items-center gap-2">
             <input
-              type="radio"
-              name="category"
+              type="checkbox"
               value={category}
-              className="form-radio"
-              checked={selectedCategory === category}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="form-checkbox"
+              checked={selectedCategory.includes(category)}
+              onChange={() => handleCategoryChange(category)}
             />
             <span>{category}</span>
           </label>

@@ -43,10 +43,10 @@ app.use(
 app.use("/user", userRoute);
 app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
-app.use("/book", bookRoute);
+app.use("/books", bookRoute);
 app.use("/cart", cartRoute);
-app.use("/order", orderRoute);
-app.use("/review", reviewRoute);
+app.use("/orders", orderRoute);
+app.use("/reviews", reviewRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

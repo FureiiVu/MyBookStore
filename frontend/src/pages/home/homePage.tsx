@@ -1,4 +1,5 @@
 import BookFilter from "@/components/BookFilter";
+import BookList from "@/components/BookList";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -30,7 +31,7 @@ function HomePage() {
           defaultSize={isMobile ? 100 : 85}
           className="bg-white p-4 my-4 mr-4 rounded-md shadow-md"
         >
-          Book List Section
+          <BookList />
         </ResizablePanel>
       </ResizablePanelGroup>
     </>
