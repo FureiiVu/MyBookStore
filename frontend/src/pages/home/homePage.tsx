@@ -12,14 +12,14 @@ function HomePage() {
     <>
       <ResizablePanelGroup
         direction="horizontal"
-        className="flex-1 flex h-full"
+        className="flex-1 flex items-start"
       >
         {/* Filter Section */}
         <ResizablePanel
           defaultSize={15}
           minSize={isMobile ? 0 : 10}
           maxSize={20}
-          className="bg-white p-4 my-4 ml-4 rounded-md shadow-md"
+          className="bg-white p-4 my-4 ml-4 rounded-md shadow-md h-auto"
         >
           <BookFilter />
         </ResizablePanel>
@@ -29,7 +29,7 @@ function HomePage() {
         {/* Book List Section */}
         <ResizablePanel
           defaultSize={isMobile ? 100 : 85}
-          className="bg-white p-4 my-4 mr-4 rounded-md shadow-md"
+          className="bg-white p-4 my-4 mr-4 rounded-md shadow-md w-full"
         >
           <BookList />
         </ResizablePanel>

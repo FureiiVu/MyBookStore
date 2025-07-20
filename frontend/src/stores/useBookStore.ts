@@ -1,7 +1,16 @@
 import axiosInstance from "@/lib/axios";
 import { create } from "zustand";
 
-export const useBookStore = create((set) => ({
+import type { Book } from "@/types";
+
+interface BookStore {
+  books: Book[];
+  isLoading: boolean;
+  error: string | null;
+  fetchBooks: () => Promise<void>;
+}
+
+export const useBookStore = create<BookStore>((set) => ({
   books: [],
   isLoading: false,
   error: null,

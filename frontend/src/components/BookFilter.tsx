@@ -35,7 +35,7 @@ const BookFilter = () => {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       <div className="flex items-center gap-2 flex-shrink-0">
         <Funnel className="w-5 h-5 text-[#3333CC]" />
         <h3 className="text-md font-bold">Bộ lọc tìm kiếm</h3>
