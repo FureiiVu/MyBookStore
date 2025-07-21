@@ -1,11 +1,12 @@
 import { Funnel } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { useBookStore } from "@/stores/useBookStore";
 
 const BookFilter = () => {
-  const [maxPrice, setMaxPrice] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
 
-  console.log("Check selectedCategory:", selectedCategory);
+  const { maxPrice, setCategories, setMaxPrice } = useBookStore();
 
   const categories = [
     "Tiểu thuyết",
@@ -14,6 +15,10 @@ const BookFilter = () => {
     "Sách truyền cảm hứng",
     "Sách bổ sung kiến thức",
   ];
+
+  useEffect(() => {
+    setCategories(selectedCategory);
+  }, [selectedCategory, setCategories]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory((prev) =>
@@ -26,7 +31,7 @@ const BookFilter = () => {
   const formatNumber = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
     return numericValue
-      ? `${Number(numericValue).toLocaleString("vi-VN")}đ`
+      ? `${Number(numericValue).toLocaleString("vi-VN")}`
       : "";
   };
 
@@ -70,14 +75,17 @@ const BookFilter = () => {
             0đ
           </span>
           <span>-</span>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder="100.000đ"
-            className="border border-gray-300 rounded-md px-3 py-1 w-24 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={maxPrice}
-            onChange={handleMaxPriceChange}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="100.000"
+              className="border border-gray-300 rounded-md px-3 py-1 w-24 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={maxPrice}
+              onChange={handleMaxPriceChange}
+            />
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">đ</span>
+          </div>
         </div>
       </div>
     </div>

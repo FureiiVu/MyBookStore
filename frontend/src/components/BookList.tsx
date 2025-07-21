@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useBookStore } from "@/stores/useBookStore";
 
 const BookList = () => {
-  const { books, isLoading, error, fetchBooks } = useBookStore();
+  const { isLoading, error, fetchBooks, filterBooks } = useBookStore();
 
   useEffect(() => {
     fetchBooks();
@@ -37,7 +37,7 @@ const BookList = () => {
     <div>
       <h3 className="text-lg font-bold mb-4">Danh sách sản phẩm:</h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {books.map((book) => (
+        {filterBooks().map((book) => (
           <Card
             key={book._id}
             className="relative overflow-hidden rounded-lg shadow transition-all duration-300 hover:shadow-lg hover:scale-105 w-55 h-[330px]"
