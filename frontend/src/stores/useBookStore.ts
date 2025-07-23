@@ -9,6 +9,7 @@ interface BookStore {
     categories: string[];
     maxPrice: string;
     searchTerm: string;
+    sortOption: string;
   };
   isLoading: boolean;
   error: string | null;
@@ -16,6 +17,7 @@ interface BookStore {
   setCategories: (categories: string[]) => void;
   setMaxPrice: (price: string) => void;
   setSearchTerm: (searchTerm: string) => void;
+  setSortOption: (sortOption: string) => void;
   filterBooks: (categories?: string[], maxPrice?: string) => Book[];
 }
 
@@ -25,6 +27,7 @@ export const useBookStore = create<BookStore>((set, get) => ({
     categories: [],
     maxPrice: "",
     searchTerm: "",
+    sortOption: "all",
   },
   isLoading: false,
   error: null,
@@ -65,15 +68,28 @@ export const useBookStore = create<BookStore>((set, get) => ({
     set({ filterState: { ...get().filterState, searchTerm } });
   },
 
+  setSortOption: (sortOption: string) => {
+    if (!sortOption) {
+      set({ filterState: { ...get().filterState, sortOption: "all" } });
+      return;
+    }
+    set({ filterState: { ...get().filterState, sortOption } });
+  },
+
   filterBooks: () => {
     const { books, filterState } = get();
-    const { categories, maxPrice, searchTerm } = filterState;
+    const { categories, maxPrice, searchTerm, sortOption } = filterState;
 
-    if (!categories?.length && !maxPrice && !searchTerm) {
+    if (
+      !categories?.length &&
+      !maxPrice &&
+      !searchTerm &&
+      sortOption === "all"
+    ) {
       return [...books];
     }
 
-    const filteredBooks = books.filter((book) => {
+    let filteredBooks = books.filter((book) => {
       const numericPrice = parseFloat(String(book.price));
 
       // Check if book matches the filter categories
@@ -95,6 +111,24 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
       return matchesCategory && matchesPrice && matchesSearchTerm;
     });
+
+    // Sort the filtered books based on the selected sort option
+    if (sortOption !== "all") {
+      filteredBooks = [...filteredBooks].sort((a, b) => {
+        switch (sortOption) {
+          case "a-z":
+            return a.title[0].localeCompare(b.title[0]);
+          case "z-a":
+            return b.title[0].localeCompare(a.title[0]);
+          case "low-to-high":
+            return a.price - b.price;
+          case "high-to-low":
+            return b.price - a.price;
+          default:
+            return 0;
+        }
+      });
+    }
 
     return filteredBooks;
   },
