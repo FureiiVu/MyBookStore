@@ -6,7 +6,8 @@ import { useBookStore } from "@/stores/useBookStore";
 const BookFilter = () => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
 
-  const { maxPrice, setCategories, setMaxPrice } = useBookStore();
+  const { filterState, setCategories, setMaxPrice } = useBookStore();
+  const { maxPrice } = filterState;
 
   const categories = [
     "Tiểu thuyết",
@@ -79,12 +80,14 @@ const BookFilter = () => {
             <input
               type="text"
               inputMode="numeric"
-              placeholder="100.000"
+              placeholder="100"
               className="border border-gray-300 rounded-md px-3 py-1 w-24 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={maxPrice}
               onChange={handleMaxPriceChange}
             />
-            <span className="absolute right-2 top-1/2 -translate-y-1/2">đ</span>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+              .000đ
+            </span>
           </div>
         </div>
       </div>

@@ -5,20 +5,27 @@ import type { Book } from "@/types";
 
 interface BookStore {
   books: Book[];
-  categories: string[];
-  maxPrice: string;
+  filterState: {
+    categories: string[];
+    maxPrice: string;
+    searchTerm: string;
+  };
   isLoading: boolean;
   error: string | null;
   fetchBooks: () => Promise<void>;
   setCategories: (categories: string[]) => void;
   setMaxPrice: (price: string) => void;
+  setSearchTerm: (searchTerm: string) => void;
   filterBooks: (categories?: string[], maxPrice?: string) => Book[];
 }
 
 export const useBookStore = create<BookStore>((set, get) => ({
   books: [],
-  categories: [],
-  maxPrice: "",
+  filterState: {
+    categories: [],
+    maxPrice: "",
+    searchTerm: "",
+  },
   isLoading: false,
   error: null,
 
@@ -36,35 +43,57 @@ export const useBookStore = create<BookStore>((set, get) => ({
 
   setCategories: (categories: string[]) => {
     if (!categories || !Array.isArray(categories) || categories.length === 0) {
-      set({ categories: [] });
+      set({ filterState: { ...get().filterState, categories: [] } });
       return;
     }
-    set({ categories });
+    set({ filterState: { ...get().filterState, categories } });
   },
 
   setMaxPrice: (price: string) => {
     if (!price) {
-      set({ maxPrice: "" });
+      set({ filterState: { ...get().filterState, maxPrice: "" } });
       return;
     }
-    set({ maxPrice: price });
+    set({ filterState: { ...get().filterState, maxPrice: price } });
+  },
+
+  setSearchTerm: (searchTerm: string) => {
+    if (!searchTerm) {
+      set({ filterState: { ...get().filterState, searchTerm: "" } });
+      return;
+    }
+    set({ filterState: { ...get().filterState, searchTerm } });
   },
 
   filterBooks: () => {
-    const { books, categories, maxPrice } = get();
+    const { books, filterState } = get();
+    const { categories, maxPrice, searchTerm } = filterState;
 
-    if (!categories?.length && !maxPrice) {
+    if (!categories?.length && !maxPrice && !searchTerm) {
       return [...books];
     }
 
     const filteredBooks = books.filter((book) => {
       const numericPrice = parseFloat(String(book.price));
+
+      // Check if book matches the filter categories
       const matchesCategory =
         !categories?.length || categories.includes(book.category);
-      const matchesPrice =
-        !maxPrice || numericPrice <= parseFloat(maxPrice.replace(/\D/g, ""));
 
-      return matchesCategory && matchesPrice;
+      // Check if book matches the filter max price
+      const matchesPrice =
+        !maxPrice ||
+        numericPrice <= parseFloat(maxPrice.replace(/\D/g, "")) * 1000;
+
+      // Check if book matches the search term (title or author)
+      const matchesSearchTerm =
+        !searchTerm ||
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.some((author) =>
+          author.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+      return matchesCategory && matchesPrice && matchesSearchTerm;
     });
 
     return filteredBooks;

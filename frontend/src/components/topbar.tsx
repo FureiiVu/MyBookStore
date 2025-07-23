@@ -4,9 +4,12 @@ import { Search, ShoppingCart } from "lucide-react";
 
 import SignInOAuthButtons from "./SignInOAuthButtons";
 import { Button } from "./ui/button";
+import { useBookStore } from "@/stores/useBookStore";
 
 export default function Topbar() {
   const isAdmin = false;
+
+  const { setSearchTerm } = useBookStore();
 
   return (
     <div className="w-full mx-auto flex items-center gap-6 p-4 sticky top-0 bg-white z-10">
@@ -29,6 +32,7 @@ export default function Topbar() {
             type="text"
             placeholder="Nhập từ khóa bạn muốn tìm kiếm: Tên sách, tên tác giả, thể loại sách, ..."
             className="flex-1 bg-transparent text-sm placeholder-gray-500 outline-none"
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <Search className="w-5 h-5 text-gray-600 ml-2" />
         </div>
