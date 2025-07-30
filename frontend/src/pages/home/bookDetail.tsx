@@ -40,9 +40,9 @@ const BookDetail = () => {
         </div>
       ) : (
         <>
-          {/* Phần trên: hình ảnh và thông tin giá */}
-          <div className="flex flex-col md:flex-row md:max-h-[600px] gap-6">
-            <div className="w-full md:w-2/5 border px-4 flex items-center justify-center bg-white">
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Hình ảnh */}
+            <div className="w-full md:w-2/5 border px-4 flex items-center justify-center bg-white h-[600px]">
               <img
                 src={book?.coverImageUrl}
                 alt={book?.title}
