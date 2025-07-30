@@ -19,6 +19,7 @@ const BookFilter = () => {
 
   useEffect(() => {
     setCategories(selectedCategory);
+    setMaxPrice("");
   }, [selectedCategory, setCategories]);
 
   const handleCategoryChange = (category: string) => {
@@ -29,15 +30,8 @@ const BookFilter = () => {
     );
   };
 
-  const formatNumber = (value: string) => {
-    const numericValue = value.replace(/\D/g, "");
-    return numericValue
-      ? `${Number(numericValue).toLocaleString("vi-VN")}`
-      : "";
-  };
-
   const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxPrice(formatNumber(e.target.value));
+    setMaxPrice(e.target.value);
   };
 
   return (

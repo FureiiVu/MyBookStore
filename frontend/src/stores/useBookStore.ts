@@ -19,6 +19,7 @@ interface BookStore {
   setSearchTerm: (searchTerm: string) => void;
   setSortOption: (sortOption: string) => void;
   filterBooks: (categories?: string[], maxPrice?: string) => Book[];
+  getBookById: (id: string) => Promise<Book | undefined>;
 }
 
 export const useBookStore = create<BookStore>((set, get) => ({
@@ -131,5 +132,18 @@ export const useBookStore = create<BookStore>((set, get) => ({
     }
 
     return filteredBooks;
+  },
+
+  getBookById: async (id: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axiosInstance.get(`/books/${id}`);
+      return response.data as Book;
+    } catch (error: any) {
+      set({ error: error.response.data.message || "Failed to get book by ID" });
+    } finally {
+      set({ isLoading: false });
+    }
+    return undefined; // Return undefined if book not found or error occurs
   },
 }));
