@@ -39,9 +39,15 @@ export default function Topbar() {
       </div>
 
       {/* Cart icon */}
-      <div className="flex-shrink-0">
-        <ShoppingCart className="w-6 h-6 text-gray-600" />
-      </div>
+      <Link to="/cart" className="flex items-center">
+        <div className="relative">
+          <ShoppingCart className="w-6 h-6 text-gray-600" />
+          {/* Cart item count can be added here if needed */}
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+            3
+          </span>
+        </div>
+      </Link>
 
       {/* Action buttons */}
       <div className="flex items-center gap-4 flex-shrink-0">

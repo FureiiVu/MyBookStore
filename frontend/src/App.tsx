@@ -5,6 +5,7 @@ import HomePage from "./pages/home/homePage";
 import BookDetail from "./pages/home/bookDetail";
 import AuthCallbackPage from "./pages/auth-callback/authCallbackPage";
 import MainLayout from "./layout/mainLayout";
+import CartPage from "./pages/home/cartPage";
 
 export default function App() {
   return (
@@ -27,6 +28,10 @@ export default function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/book-detail/:id" element={<BookDetail />} />
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/cart" element={<CartPage />} />
         </Route>
       </Routes>
     </>

@@ -13,7 +13,6 @@ function AuthCallbackPage() {
 
   useEffect(() => {
     const syncUser = async () => {
-      console.log("isLoaded:", isLoaded, "user:", user);
       if (!isLoaded || !user || syncAttempt.current) return;
       try {
         syncAttempt.current = true;

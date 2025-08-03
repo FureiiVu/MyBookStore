@@ -15,3 +15,21 @@ export interface Book {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface User {
+  _id: string;
+  name: string;
+  imageUrl: string;
+  clerkId: string;
+}
+
+export interface Cart {
+  _id: string;
+  user: User;
+  items: CartItem[];
+}
+
+export interface CartItem {
+  book: Book;
+  quantity: number;
+}
