@@ -20,6 +20,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const initAuth = async () => {
       try {
         const token = await getToken();
+        console.log("Token from Clerk:", token);
         updateApiToken(token);
       } catch (error) {
         updateApiToken(null);

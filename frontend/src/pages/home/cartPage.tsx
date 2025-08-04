@@ -5,12 +5,27 @@ import { Button } from "@/components/ui/button";
 import useCartStore from "@/stores/useCartStore";
 
 const CartPage = () => {
-  const { cart, fetchCart } = useCartStore();
+  const { cart, isLoading, error, fetchCart } = useCartStore();
 
   useEffect(() => {
     fetchCart();
-    console.log("Cart data:", cart);
   }, [fetchCart]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="w-12 h-12 rounded-full border-b-2 border-blue-500 animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-3 text-red-700 bg-red-100 rounded border border-red-400">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row gap-4 p-4 md:p-6">

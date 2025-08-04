@@ -1,7 +1,8 @@
 import { clerkClient } from "@clerk/express";
 
 export const requireLoggedIn = (req, res, next) => {
-  if (!req.auth || !req.auth.userId) {
+  const auth = req.auth();
+  if (!auth || !auth.userId) {
     return res
       .status(401)
       .json({ message: "Unauthorized - You must be logged in" });

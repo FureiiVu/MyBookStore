@@ -1,4 +1,5 @@
 import Cart from "../models/cart_model.js";
+import User from "../models/user_model.js";
 
 const getUserByClerkId = async (clerkId) => {
   return await User.findOne({ clerkId });
@@ -6,15 +7,16 @@ const getUserByClerkId = async (clerkId) => {
 
 export const getCartItems = async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    const userId = req.auth().userId;
     const user = await getUserByClerkId(userId);
-    const cart = await Cart.findOne({ user: user._id }).populate("items.book"); // Find the cart for the user and populate book details
 
     if (!user) {
       return res
         .status(404)
         .json({ message: "Error in getting cart items: User not found" });
     }
+
+    const cart = await Cart.findOne({ user: user._id }).populate("items.book"); // Find the cart for the user and populate book details
 
     if (!cart) {
       return res
@@ -31,7 +33,7 @@ export const getCartItems = async (req, res, next) => {
 
 export const addToCart = async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    const userId = req.auth().userId;
     const user = await getUserByClerkId(userId);
     const { bookId, quantity } = req.body;
 
@@ -102,7 +104,7 @@ export const addToCart = async (req, res, next) => {
 
 export const removeCartItem = async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    const userId = req.auth().userId;
     const user = await getUserByClerkId(userId);
     const itemId = req.params.id;
 
@@ -156,7 +158,7 @@ export const removeCartItem = async (req, res, next) => {
 
 export const removeAllCartItem = async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    const userId = req.auth().userId;
     const user = await getUserByClerkId(userId);
 
     if (!user) {

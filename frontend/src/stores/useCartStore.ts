@@ -20,6 +20,7 @@ const useCartStore = create<CartStore>((set) => ({
     try {
       const response = await axiosInstance.get("/cart");
       set({ cart: response.data });
+      console.log("Cart fetched successfully:", response.data);
     } catch (error: any) {
       set({ error: error.response.data.message || "Failed to fetch cart" });
     } finally {
