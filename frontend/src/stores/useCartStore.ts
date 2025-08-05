@@ -8,9 +8,12 @@ interface CartStore {
   isLoading: boolean;
   error: string | null;
   fetchCart: () => Promise<void>;
+  addCartItem: (itemId: string, quantity: number) => Promise<void>;
+  getCartItemCount: () => number;
+  deleteCartItem: (itemId: string) => Promise<void>;
 }
 
-const useCartStore = create<CartStore>((set) => ({
+export const useCartStore = create<CartStore>((set, get) => ({
   cart: null,
   isLoading: false,
   error: null,
@@ -27,6 +30,36 @@ const useCartStore = create<CartStore>((set) => ({
       set({ isLoading: false });
     }
   },
-}));
 
-export default useCartStore;
+  addCartItem: async (bookId: string, quantity: number) => {
+    set({ isLoading: true, error: null });
+    try {
+      await axiosInstance.post("/cart", { bookId, quantity });
+      await get().fetchCart();
+    } catch (error: any) {
+      set({
+        error: error.response.data.message || "Failed to add item to cart",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getCartItemCount: () => {
+    const cart = get().cart;
+    return cart?.items.length || 0;
+  },
+
+  deleteCartItem: async (itemId: string) => {
+    try {
+      await axiosInstance.delete(`/cart/${itemId}`);
+      await get().fetchCart();
+    } catch (error: any) {
+      set({
+        error: error.response.data.message || "Failed to remove item from cart",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));

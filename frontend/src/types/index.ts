@@ -30,6 +30,7 @@ export interface Cart {
 }
 
 export interface CartItem {
+  _id: string;
   book: Book;
   quantity: number;
 }

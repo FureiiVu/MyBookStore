@@ -1,5 +1,8 @@
+import mongoose from "mongoose";
+
 import Cart from "../models/cart_model.js";
 import User from "../models/user_model.js";
+import Book from "../models/book_model.js";
 
 const getUserByClerkId = async (clerkId) => {
   return await User.findOne({ clerkId });
@@ -19,12 +22,10 @@ export const getCartItems = async (req, res, next) => {
     const cart = await Cart.findOne({ user: user._id }).populate("items.book"); // Find the cart for the user and populate book details
 
     if (!cart) {
-      return res
-        .status(404)
-        .json({ message: "Error in getting cart items: Cart not found" });
+      return res.status(200).json([]);
     }
 
-    res.status(200).json(cart.items); // Return the items in the cart
+    res.status(200).json(cart || []);
   } catch (error) {
     console.error("Error in getting cart items:", error);
     next(error);

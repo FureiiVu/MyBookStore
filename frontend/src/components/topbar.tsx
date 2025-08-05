@@ -5,11 +5,13 @@ import { Search, ShoppingCart } from "lucide-react";
 import SignInOAuthButtons from "./SignInOAuthButtons";
 import { Button } from "./ui/button";
 import { useBookStore } from "@/stores/useBookStore";
+import { useCartStore } from "@/stores/useCartStore";
 
 export default function Topbar() {
   const isAdmin = false;
 
   const { setSearchTerm } = useBookStore();
+  const { getCartItemCount } = useCartStore();
 
   return (
     <div className="w-full mx-auto flex items-center gap-6 p-4 sticky top-0 bg-white z-10">
@@ -44,7 +46,7 @@ export default function Topbar() {
           <ShoppingCart className="w-6 h-6 text-gray-600" />
           {/* Cart item count can be added here if needed */}
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-            3
+            {getCartItemCount()}
           </span>
         </div>
       </Link>

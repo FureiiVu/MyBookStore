@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { useBookStore } from "../../stores/useBookStore";
+import { useCartStore } from "@/stores/useCartStore";
 import { Button } from "@/components/ui/button";
 import {
   formatNumber,
@@ -12,6 +13,7 @@ import type { Book } from "@/types";
 
 const BookDetail = () => {
   const { isLoading, error, getBookById } = useBookStore();
+  const { addCartItem } = useCartStore();
 
   const { id } = useParams<{ id: string }>();
 
@@ -76,7 +78,10 @@ const BookDetail = () => {
                 <p className="text-2xl font-semibold text-[#3333CC]">
                   {formatNumber(String(book?.price))}
                 </p>
-                <Button className="w-full md:w-auto p-6 text-base rounded-md bg-[#5555DD] text-white hover:bg-[#3333CC] transition-colors duration-200">
+                <Button
+                  className="w-full md:w-auto p-6 text-base rounded-md bg-[#5555DD] text-white hover:bg-[#3333CC] transition-colors duration-200"
+                  onClick={() => addCartItem(String(id), 1)}
+                >
                   Thêm vào giỏ hàng
                 </Button>
               </div>
