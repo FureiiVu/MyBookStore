@@ -1,13 +1,19 @@
-import { useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/useCartStore";
+import { useOrderStore } from "@/stores/useOrderStore";
 import { formatNumber } from "@/middlewares/dataFormatter";
+import Invoice from "@/components/Invoice";
 
 const CartPage = () => {
   const { cart, isLoading, error, fetchCart, addCartItem, deleteCartItem } =
     useCartStore();
+
+  const { addOrder } = useOrderStore();
+
+  const [showInvoice, setShowInvoice] = useState(false);
 
   useEffect(() => {
     fetchCart();
@@ -149,12 +155,40 @@ const CartPage = () => {
                 {formatNumber(String(totalAmount))}
               </span>
             </div>
-            <Button className="w-full mt-2 text-white bg-[#5555DD] hover:bg-[#3333CC] transition-colors duration-200">
+            <Button
+              className="w-full mt-2 text-white bg-[#5555DD] hover:bg-[#3333CC] transition-colors duration-200"
+              onClick={async () => {
+                const payload = {
+                  orderItems: cart?.items.map((item) => ({
+                    bookId: item.book._id,
+                    quantity: item.quantity,
+                  })),
+                };
+
+                await addOrder(payload);
+
+                setShowInvoice(true);
+              }}
+            >
               Thanh toán
             </Button>
           </CardContent>
         </Card>
       </div>
+
+      {showInvoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative animate-fadeIn">
+            <Invoice />
+            <button
+              className="text-center text-gray-500 hover:text-gray-800"
+              onClick={() => setShowInvoice(false)}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

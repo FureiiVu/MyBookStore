@@ -34,3 +34,22 @@ export interface CartItem {
   book: Book;
   quantity: number;
 }
+
+export interface OrderItem {
+  _id: string;
+  book: Book;
+  quantity: number;
+  price: number;
+  title: string;
+  coverImageUrl: string;
+}
+
+export interface Order {
+  _id: string;
+  user: string;
+  orderItems: OrderItem[];
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}

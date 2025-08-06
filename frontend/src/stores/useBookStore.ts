@@ -20,6 +20,7 @@ interface BookStore {
   setSortOption: (sortOption: string) => void;
   filterBooks: (categories?: string[], maxPrice?: string) => Book[];
   getBookById: (id: string) => Promise<Book | undefined>;
+  getSearchedBooks: () => Book[];
 }
 
 export const useBookStore = create<BookStore>((set, get) => ({
@@ -146,4 +147,22 @@ export const useBookStore = create<BookStore>((set, get) => ({
     }
     return undefined; // Return undefined if book not found or error occurs
   },
+
+  getSearchedBooks: () => {
+    const { books, filterState } = get();
+    const { searchTerm } = filterState;
+
+    if (!searchTerm) {
+      return books;
+    }
+
+    return books.filter((book) => {
+      return (
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.some((author) =>
+          author.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    });
+  }
 }));

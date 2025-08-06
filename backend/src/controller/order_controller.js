@@ -2,9 +2,11 @@ import Order from "../models/order_model.js";
 import User from "../models/user_model.js";
 import Book from "../models/book_model.js";
 
+import mongoose from "mongoose";
+
 export const getOrderByUserId = async (req, res, next) => {
   try {
-    const userClerkId = req.auth.userId;
+    const userClerkId = req.auth().userId;
     const user = await User.findOne({ clerkId: userClerkId });
 
     if (!user) {
@@ -25,7 +27,7 @@ export const getOrderByUserId = async (req, res, next) => {
 
 export const createOrder = async (req, res, next) => {
   try {
-    const userClerkId = req.auth.userId;
+    const userClerkId = req.auth().userId;
     const user = await User.findOne({ clerkId: userClerkId });
 
     if (!user) {
@@ -61,19 +63,15 @@ export const createOrder = async (req, res, next) => {
 
       const book = await Book.findById(bookId);
       if (!book) {
-        return res
-          .status(404)
-          .json({
-            message: `Error in creating order: Book not found - ${bookId}`,
-          });
+        return res.status(404).json({
+          message: `Error in creating order: Book not found - ${bookId}`,
+        });
       }
 
       if (book.stock < quantity) {
-        return res
-          .status(400)
-          .json({
-            message: `Error in creating order: Not enough stock for "${book.title}"`,
-          });
+        return res.status(400).json({
+          message: `Error in creating order: Not enough stock for "${book.title}"`,
+        });
       }
 
       // Trừ stock
@@ -100,9 +98,7 @@ export const createOrder = async (req, res, next) => {
 
     const savedOrder = await newOrder.save();
 
-    res
-      .status(201)
-      .json({ message: "Order created successfully", order: savedOrder });
+    res.status(201).json({ order: savedOrder });
   } catch (error) {
     console.error("Error in creating order:", error);
     next(error);

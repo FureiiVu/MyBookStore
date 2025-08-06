@@ -27,10 +27,6 @@ export default function App() {
           <Route path="/book-detail/:id" element={<BookDetail />} />
           <Route path="/cart" element={<CartPage />} />
         </Route>
-
-        <Route element={<MainLayout />}></Route>
-
-        <Route element={<MainLayout />}></Route>
       </Routes>
     </>
   );
