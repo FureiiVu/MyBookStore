@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SelectField } from "./SelectField";
+import { ImageUpload } from "./ImageUpload";
 import type { Book } from "@/types";
 
 interface SlideFormProps {
@@ -11,19 +13,28 @@ interface SlideFormProps {
   onSubmit: (formData: FormData) => Promise<void>;
 }
 
+const initialFormState = {
+  title: "",
+  author: [""],
+  description: "",
+  category: "",
+  price: "",
+  publisher: "",
+  publishDate: "",
+  language: "",
+  pages: "",
+  stock: "",
+};
+
+const categoryOptions = [
+  { value: "", label: "Chọn thể loại" },
+  { value: "Văn học", label: "Văn học" },
+  { value: "Kinh tế", label: "Kinh tế" },
+  { value: "Kỹ năng sống", label: "Kỹ năng sống" },
+];
+
 const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    author: [""],
-    description: "",
-    category: "",
-    price: "",
-    publisher: "",
-    publishDate: "",
-    language: "",
-    pages: "",
-    stock: "",
-  });
+  const [formData, setFormData] = useState(initialFormState);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,103 +51,36 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
         pages: book.pages.toString(),
         stock: book.stock.toString(),
       });
+      setCoverPreview(book.coverImageUrl);
     } else {
-      setFormData({
-        title: "",
-        author: [""],
-        description: "",
-        category: "",
-        price: "",
-        publisher: "",
-        publishDate: "",
-        language: "",
-        pages: "",
-        stock: "",
-      });
+      setFormData(initialFormState);
+      setCoverPreview(null);
     }
   }, [mode, book, isOpen]);
 
-  const formFields = [
-    // Basic info - first row
-    [
-      { name: "title", label: "Tên sách", type: "text" },
-      { name: "author", label: "Tác giả", type: "text" },
-    ],
-    // Publishing info - second row
-    [
-      { name: "publisher", label: "Nhà xuất bản", type: "text" },
-      { name: "publishDate", label: "Ngày xuất bản", type: "date" },
-    ],
-    // Category and price - third row
-    [
-      {
-        name: "category",
-        label: "Thể loại",
-        type: "select",
-        options: [
-          { value: "", label: "Chọn thể loại" },
-          { value: "Văn học", label: "Văn học" },
-          { value: "Kinh tế", label: "Kinh tế" },
-          { value: "Kỹ năng sống", label: "Kỹ năng sống" },
-        ],
-      },
-      { name: "price", label: "Giá", type: "number", min: "0" },
-    ],
-    // Details - fourth row
-    [
-      { name: "language", label: "Ngôn ngữ", type: "text" },
-      { name: "pages", label: "Số trang", type: "number", min: "1" },
-      { name: "stock", label: "Số lượng", type: "number", min: "0" },
-    ],
-  ];
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const renderField = (field: any) => {
-    const commonProps = {
-      name: field.name,
-      value: formData[field.name as keyof typeof formData],
-      onChange: (
-        e: React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-        >
-      ) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value })),
-      className: "w-full p-2 border rounded-lg",
-      required: true,
-      ...field,
-    };
+  const handleAuthorChange = (index: number, value: string) => {
+    const newAuthors = [...formData.author];
+    newAuthors[index] = value;
+    setFormData((prev) => ({ ...prev, author: newAuthors }));
+  };
 
-    switch (field.type) {
-      case "textarea":
-        return <textarea {...commonProps} rows={4} />;
-      case "select":
-        return (
-          <div className="relative">
-            <select
-              {...commonProps}
-              className={`${commonProps.className} pr-8 appearance-none`}
-            >
-              {field.options.map((opt: any) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        );
-      default:
-        return <input {...commonProps} type={field.type} />;
+  const addAuthorField = () => {
+    setFormData((prev) => ({ ...prev, author: [...prev.author, ""] }));
+  };
+
+  const removeAuthorField = (index: number) => {
+    if (formData.author.length > 1) {
+      const newAuthors = formData.author.filter((_, i) => i !== index);
+      setFormData((prev) => ({ ...prev, author: newAuthors }));
     }
   };
 
@@ -148,67 +92,171 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
         }`}
         onClick={onClose}
       />
+
       <div
-        className={`fixed right-0 top-0 h-full w-2/3 max-w-3xl bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-full w-2/3 max-w-3xl bg-white shadow-xl transform transition-transform duration-300 flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="h-full overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-[#3333CC]">
-              {mode === "create" ? "Thêm sách mới" : "Cập nhật sách"}
-            </h2>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="w-6 h-6" />
-            </Button>
-          </div>
+        {/* Header - Fixed at top */}
+        <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-[#3333CC]">
+            {mode === "create" ? "Thêm sách mới" : "Cập nhật sách"}
+          </h2>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="w-6 h-6" />
+          </Button>
+        </div>
 
+        {/* Form Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
           <form className="p-6 space-y-6">
-            {/* Basic Info Fields in Grid */}
-            {formFields.map((row, rowIndex) => (
-              <div key={rowIndex} className="grid grid-cols-2 gap-6">
-                {row.map((field) => (
-                  <div key={field.name} className="space-y-1">
-                    <label className="block text-sm font-medium">
-                      {field.label}
-                    </label>
-                    {renderField(field)}
-                  </div>
-                ))}
+            {/* Basic Info */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Tên sách</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
               </div>
-            ))}
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Thể loại</label>
+                <SelectField
+                  name="category"
+                  value={formData.category}
+                  options={categoryOptions}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
 
-            {/* Cover Image Upload */}
+            {/* Authors Section */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Tác giả</label>
+              {formData.author.map((author, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={author}
+                    onChange={(e) => handleAuthorChange(index, e.target.value)}
+                    className="flex-1 p-2 border rounded-lg"
+                    placeholder={`Tác giả ${index + 1}`}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => removeAuthorField(index)}
+                    disabled={formData.author.length === 1}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-2"
+                onClick={addAuthorField}
+              >
+                Thêm tác giả
+              </Button>
+            </div>
+
+            {/* Publishing Info - Update to include language */}
+            <div className="grid grid-cols-3 gap-6">
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">
+                  Nhà xuất bản
+                </label>
+                <input
+                  type="text"
+                  name="publisher"
+                  value={formData.publisher}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">
+                  Ngày xuất bản
+                </label>
+                <input
+                  type="date"
+                  name="publishDate"
+                  value={formData.publishDate}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Ngôn ngữ</label>
+                <input
+                  type="text"
+                  name="language"
+                  value={formData.language}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Details */}
+            <div className="grid grid-cols-3 gap-6">
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Giá (VNĐ)</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  min="0"
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Số trang</label>
+                <input
+                  type="number"
+                  name="pages"
+                  value={formData.pages}
+                  onChange={handleInputChange}
+                  min="1"
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Số lượng</label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleInputChange}
+                  min="0"
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Image Upload */}
             <div className="space-y-1">
               <label className="block text-sm font-medium">Ảnh bìa</label>
-              <div className="flex items-start gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 p-4 border-2 border-dashed rounded-lg hover:bg-gray-50 transition-colors">
-                    <Upload className="w-5 h-5 text-gray-400" />
-                    <span className="text-sm text-gray-500">
-                      Kéo thả hoặc click để tải ảnh lên
-                    </span>
-                  </div>
-                </div>
-                {coverPreview && (
-                  <div className="w-32 h-40 relative">
-                    <img
-                      src={coverPreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute -top-2 -right-2 w-6 h-6"
-                      onClick={() => setCoverPreview("")}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                preview={coverPreview}
+                onPreviewChange={setCoverPreview}
+              />
             </div>
 
             {/* Description */}
@@ -217,28 +265,25 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
               <textarea
                 name="description"
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
+                onChange={handleInputChange}
                 rows={6}
                 className="w-full p-2 border rounded-lg"
                 required
               />
             </div>
-
-            {/* Form Actions */}
-            <div className="flex justify-end gap-4 pt-6 border-t">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Hủy
-              </Button>
-              <Button type="submit">
-                {mode === "create" ? "Thêm sách" : "Cập nhật"}
-              </Button>
-            </div>
           </form>
+        </div>
+
+        {/* Footer - Fixed at bottom */}
+        <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-4">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Hủy
+          </Button>
+          <Button type="submit" form="bookForm">
+            {" "}
+            {/* Connect to form */}
+            {mode === "create" ? "Thêm sách" : "Cập nhật"}
+          </Button>
         </div>
       </div>
     </>

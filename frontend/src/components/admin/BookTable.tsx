@@ -57,8 +57,10 @@ export const BookTable = ({
               <td className="px-6 py-4">{book.title}</td>
               <td className="px-6 py-4">{book.author.join(", ")}</td>
               <td className="px-6 py-4">{book.category}</td>
-              <td className="px-6 py-4">{formatNumber(String(book.price))}</td>
-              <td className="px-6 py-4">{book.stock}</td>
+              <td className="px-6 py-4 text-right">
+                {formatNumber(String(book.price))}
+              </td>
+              <td className="px-6 py-4 text-center">{book.stock}</td>
               <td className="px-6 py-4">
                 <div className="flex justify-center gap-2">
                   <Button

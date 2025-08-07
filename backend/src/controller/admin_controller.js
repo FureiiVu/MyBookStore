@@ -1,5 +1,4 @@
 import Book from "../models/book_model.js";
-import User from "../models/user_model.js";
 import Order from "../models/order_model.js";
 import Review from "../models/review_model.js";
 import Cart from "../models/cart_model.js";
@@ -69,13 +68,11 @@ export const updateBook = async (req, res, next) => {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    //Handle if no cover image uploaded
     const coverImage = req.files?.imageFile || null;
     const coverImageUrl = coverImage
       ? await handleUploadImage(coverImage)
       : book.coverImageUrl;
 
-    //Handle if no images uploaded
     let imageUrls = book.imageUrls;
     const images = req.files?.images || null;
     if (images) {
@@ -113,16 +110,42 @@ export const deleteBook = async (req, res, next) => {
     }
 
     await Promise.all([
-      await Book.findByIdAndDelete(id),
-      await Review.deleteMany({ book: book._id }), // Delete all reviews associated with the book
-      await Cart.updateMany({}, { $pull: { items: { book: id } } }), // Remove book from all carts
+      Book.findByIdAndDelete(id),
+      Review.deleteMany({ book: book._id }), // Delete all reviews associated with the book
+      Cart.updateMany({}, { $pull: { items: { book: id } } }), // Remove book from all carts
     ]);
 
-    res
-      .status(200)
-      .json({ message: `Book id ${id} deleted successfully`, book: book });
+    res.status(200).json({
+      message: `Book id ${id} deleted successfully`,
+      book: book,
+    });
   } catch (error) {
     console.error("Error in deleting book:", error);
+    next(error);
+  }
+};
+
+export const deleteBooks = async (req, res, next) => {
+  try {
+    const { bookIds } = req.body;
+
+    if (!bookIds || !Array.isArray(bookIds) || bookIds.length === 0) {
+      return res.status(400).json({ message: "Invalid book ids provided" });
+    }
+
+    // Delete books and related data
+    await Promise.all([
+      Book.deleteMany({ _id: { $in: bookIds } }),
+      Review.deleteMany({ book: { $in: bookIds } }),
+      Cart.updateMany({}, { $pull: { items: { book: { $in: bookIds } } } }),
+    ]);
+
+    res.status(200).json({
+      message: "Books deleted successfully",
+      deletedCount: bookIds.length,
+    });
+  } catch (error) {
+    console.error("Error in batch deleting books:", error);
     next(error);
   }
 };
@@ -131,45 +154,9 @@ export const checkAdmin = (req, res) => {
   res.status(200).json({ admin: true });
 };
 
-export const getUsers = async (req, res, next) => {
-  try {
-    const users = await User.find();
-    res.status(200).json({ users });
-  } catch (error) {
-    console.error("Error in getting users:", error);
-    next(error);
-  }
-};
-
-export const deleteUser = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    await Promise.all([
-      User.findByIdAndDelete(id),
-      Cart.findOneAndDelete({ user: id }),
-      Order.deleteMany({ user: id }),
-      Review.deleteMany({ user: id }),
-    ]);
-
-    res.status(200).json({
-      message: `User id ${id} and associated data deleted successfully`,
-      user,
-    });
-  } catch (error) {
-    console.error("Error in deleting user:", error);
-    next(error);
-  }
-};
-
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().populate("user items.book");
     res.status(200).json({ orders });
   } catch (error) {
     console.error("Error in getting orders:", error);
@@ -180,16 +167,40 @@ export const getOrders = async (req, res, next) => {
 export const deleteOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
+
     await Order.findByIdAndDelete(id);
-    res
-      .status(200)
-      .json({ message: `Order id ${id} deleted successfully`, order: order });
+
+    res.status(200).json({
+      message: `Order ${id} deleted successfully`,
+      order: order,
+    });
   } catch (error) {
     console.error("Error in deleting order:", error);
+    next(error);
+  }
+};
+
+export const deleteOrders = async (req, res, next) => {
+  try {
+    const { orderIds } = req.body;
+
+    if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+      return res.status(400).json({ message: "Invalid order ids provided" });
+    }
+
+    await Order.deleteMany({ _id: { $in: orderIds } });
+
+    res.status(200).json({
+      message: "Orders deleted successfully",
+      deletedCount: orderIds.length,
+    });
+  } catch (error) {
+    console.error("Error in batch deleting orders:", error);
     next(error);
   }
 };

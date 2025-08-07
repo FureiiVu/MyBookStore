@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useUserStore } from "@/stores/useUserStore";
 import { useBookStore } from "@/stores/useBookStore";
@@ -17,11 +17,22 @@ type Tab = "books" | "orders";
 
 const AdminDashboard = () => {
   const { isAdmin } = useUserStore();
-  const { isLoading, error, setSearchTerm, getSearchedBooks } = useBookStore();
+  const {
+    isLoading,
+    error,
+    fetchBooks, // Thêm hàm fetch
+    setSearchTerm,
+    getSearchedBooks,
+  } = useBookStore();
   const [activeTab, setActiveTab] = useState<Tab>("books");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+
+  // Fetch books khi component mount
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
   const filteredBooks = getSearchedBooks();
   const { currentPage, setCurrentPage, paginatedItems, totalItems } =
@@ -84,6 +95,8 @@ const AdminDashboard = () => {
         book={selectedBook || undefined}
         onSubmit={async () => {
           setIsFormOpen(false);
+          // Refresh danh sách sách sau khi thêm/sửa
+          await fetchBooks();
         }}
       />
     </div>
