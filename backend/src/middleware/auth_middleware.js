@@ -12,9 +12,10 @@ export const requireLoggedIn = (req, res, next) => {
 
 export const requireAdmin = async (req, res, next) => {
   try {
-    const currentUser = await clerkClient.users.getUser(req.auth.userId);
+    const currentUser = await clerkClient.users.getUser(req.auth().userId);
+
     const isAdmin =
-      process.env.ADMIN_EMAIL === currentUser.primaryEmailAddress?.emailAddress;
+      process.env.ADMIN_EMAIL === currentUser.emailAddresses[0].emailAddress;
 
     if (!isAdmin) {
       return res
@@ -24,6 +25,10 @@ export const requireAdmin = async (req, res, next) => {
 
     next();
   } catch (error) {
-    next(error);
+    console.error("Admin check error:", error);
+    return res.status(500).json({
+      message: "Error checking admin status",
+      error: error.message,
+    });
   }
 };

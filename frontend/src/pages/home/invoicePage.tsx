@@ -1,19 +1,23 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useOrderStore } from "@/stores/useOrderStore";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   formatDateToDDMMYYYY,
   formatNumber,
 } from "@/middlewares/dataFormatter";
+import { Button } from "@/components/ui/button";
 
 const InvoicePage = () => {
   const { order, isLoading, error, getOrder } = useOrderStore();
+  const { user: userInfo, getUserById } = useUserStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getOrder();
+    getUserById();
   }, []);
-
-  console.log("Order data:", order); // Thêm dòng này để kiểm tra dữ liệu
 
   if (!order) {
     return (
@@ -40,8 +44,8 @@ const InvoicePage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-10 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8 md:p-12 space-y-10">
+    <div className="bg-gray-50 min-h-screen py-6 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8 md:p-12 space-y-8">
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between md:items-center border-b pb-6 space-y-4 md:space-y-0">
           <div>
@@ -76,11 +80,22 @@ const InvoicePage = () => {
 
         {/* Thông tin người dùng + Tổng tiền */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-lg border">
-          <div>
-            <h2 className="font-semibold text-gray-700 mb-1">
-              Người đặt hàng:
-            </h2>
-            <p className="text-base text-gray-800">{order.user}</p>
+          <div className="flex items-center gap-3">
+            {userInfo?.imageUrl && (
+              <img
+                src={userInfo.imageUrl}
+                alt={userInfo.name}
+                className="w-12 h-12 rounded-full object-cover border"
+              />
+            )}
+            <div>
+              <h2 className="font-semibold text-gray-700 mb-1">
+                Người đặt hàng:
+              </h2>
+              <p className="text-base text-gray-800">
+                {userInfo?.name || "Ẩn danh"}
+              </p>
+            </div>
           </div>
           <div className="text-left md:text-right">
             <h2 className="font-semibold text-gray-700 mb-1">Tổng đơn hàng:</h2>
@@ -142,10 +157,18 @@ const InvoicePage = () => {
         {/* Tổng kết */}
         <footer className="flex justify-end">
           <div className="w-full max-w-xs text-left md:text-right space-y-1">
-            <p className="text-sm text-gray-600">Tổng giá trị đơn hàng:</p>
+            <p className="text-md font-medium text-gray-600">
+              Tổng giá trị đơn hàng:
+            </p>
             <p className="text-2xl font-bold text-[#3333CC]">
               {formatNumber(String(order.totalPrice))}
             </p>
+            <Button
+              onClick={() => navigate("/")}
+              className="p-4 mt-2 bg-[#3333CC] text-white font-medium rounded-lg hover:bg-[#2828a3] transition-colors"
+            >
+              Xác nhận
+            </Button>
           </div>
         </footer>
       </div>

@@ -13,7 +13,7 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getUserById = async (req, res, next) => {
   try {
-    const currentUserId = req.auth.userId;
+    const currentUserId = req.auth().userId;
     const user = await User.findOne({ clerkId: currentUserId });
 
     if (!user) {
@@ -22,7 +22,7 @@ export const getUserById = async (req, res, next) => {
         .json({ message: "Error in getting user by ID: User not found" });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({ user });
   } catch (error) {
     console.error("Error in getting user by ID:", error);
     next(error);
@@ -31,7 +31,7 @@ export const getUserById = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   try {
-    const currentUserId = req.auth.userId;
+    const currentUserId = req.auth().userId;
     const currentUser = await User.findOne({ clerkId: currentUserId });
 
     if (!currentUser) {

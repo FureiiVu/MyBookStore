@@ -20,7 +20,6 @@ export const useOrderStore = create<OrderStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.post("/orders", orderItems);
-      console.log("Order created successfully:", response.data);
       set({ order: response.data.order });
     } catch (error: any) {
       set({

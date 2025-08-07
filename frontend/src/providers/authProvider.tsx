@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import axiosInstance from "@/lib/axios";
 import { Loader } from "lucide-react";
 
+import { useUserStore } from "@/stores/useUserStore";
+
 const updateApiToken = (token: string | null) => {
   if (token) {
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -15,23 +17,26 @@ const updateApiToken = (token: string | null) => {
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { getToken } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
+  const { checkAdmin } = useUserStore();
 
   useEffect(() => {
     const initAuth = async () => {
       try {
         const token = await getToken();
-        console.log("Token from Clerk:", token);
         updateApiToken(token);
+        if (token) {
+          await checkAdmin();
+        }
       } catch (error) {
+        console.error("Auth initialization error:", error);
         updateApiToken(null);
-        console.log("Error fetching token:", error);
       } finally {
         setLoading(false);
       }
     };
 
     initAuth();
-  }, [getToken]);
+  }, [getToken, checkAdmin]); // Add checkAdmin to dependencies
 
   if (loading) {
     return (

@@ -48,7 +48,7 @@ const BookList = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold">Danh sách sản phẩm:</h3>
+        <h3 className="text-lg font-bold">Danh sách sản phẩm</h3>
         <div className="flex items-center space-x-2">
           <h3 className="text-md font-semibold">Sắp xếp:</h3>
           <div className="relative inline-block w-50 text-left">

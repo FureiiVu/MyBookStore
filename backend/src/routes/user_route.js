@@ -1,5 +1,4 @@
 import { Router } from "express";
-
 import {
   getAllUsers,
   getUserById,
@@ -12,8 +11,8 @@ import {
 
 const router = Router();
 
-router.get("/", requireLoggedIn, requireAdmin, getAllUsers);
-router.get("/:id", requireLoggedIn, getUserById);
+router.get("/all", requireLoggedIn, requireAdmin, getAllUsers); // Đổi route getAllUsers
+router.get("/profile", requireLoggedIn, getUserById); // Đổi route getUserById
 router.put("/:id", requireLoggedIn, updateUser);
 
 export default router;

@@ -8,9 +8,10 @@ import { Button } from "./ui/button";
 import { useBookStore } from "@/stores/useBookStore";
 import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber } from "@/middlewares/dataFormatter";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default function Topbar() {
-  const isAdmin = false;
+  const { isAdmin } = useUserStore();
   const { setSearchTerm, getSearchedBooks } = useBookStore();
   const { getCartItemCount } = useCartStore();
 
@@ -128,7 +129,9 @@ export default function Topbar() {
       <div className="flex items-center gap-4 flex-shrink-0">
         {isAdmin && (
           <Button className="text-white h-11 bg-[#3333CC] hover:bg-blue-900 transition-colors">
-            <Link to="/admin">Admin Dashboard</Link>
+            <Link to="/admin" target="_blank" rel="noopener noreferrer">
+              Admin Dashboard
+            </Link>
           </Button>
         )}
         <SignedIn>

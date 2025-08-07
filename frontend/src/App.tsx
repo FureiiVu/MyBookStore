@@ -7,6 +7,7 @@ import AuthCallbackPage from "./pages/auth-callback/authCallbackPage";
 import MainLayout from "./layout/mainLayout";
 import CartPage from "./pages/home/cartPage";
 import InvoicePage from "./pages/home/invoicePage";
+import AdminDashboard from "@/pages/admin/adminDashboard";
 
 export default function App() {
   return (
@@ -29,6 +30,8 @@ export default function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/order" element={<InvoicePage />} />
         </Route>
+
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </>
   );
