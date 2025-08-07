@@ -11,6 +11,7 @@ interface CartStore {
   addCartItem: (itemId: string, quantity: number) => Promise<void>;
   getCartItemCount: () => number;
   deleteCartItem: (itemId: string) => Promise<void>;
+  deleteAllCartItems: () => Promise<void>;
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -23,7 +24,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const response = await axiosInstance.get("/cart");
       set({ cart: response.data });
-      console.log("Cart fetched successfully:", response.data);
     } catch (error: any) {
       set({ error: error.response.data.message || "Failed to fetch cart" });
     } finally {
@@ -57,6 +57,21 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (error: any) {
       set({
         error: error.response.data.message || "Failed to remove item from cart",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteAllCartItems: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await axiosInstance.delete("/cart");
+      await get().fetchCart();
+    } catch (error: any) {
+      set({
+        error:
+          error.response.data.message || "Failed to remove all items from cart",
       });
     } finally {
       set({ isLoading: false });

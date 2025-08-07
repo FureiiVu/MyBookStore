@@ -6,6 +6,7 @@ import BookDetail from "./pages/home/bookDetail";
 import AuthCallbackPage from "./pages/auth-callback/authCallbackPage";
 import MainLayout from "./layout/mainLayout";
 import CartPage from "./pages/home/cartPage";
+import InvoicePage from "./pages/home/invoicePage";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/book-detail/:id" element={<BookDetail />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/order" element={<InvoicePage />} />
         </Route>
       </Routes>
     </>

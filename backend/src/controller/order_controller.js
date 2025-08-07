@@ -86,7 +86,7 @@ export const createOrder = async (req, res, next) => {
         quantity,
         price: book.price,
         title: book.title,
-        coverImage: book.coverImageUrl,
+        coverImageUrl: book.coverImageUrl,
       });
     }
 
