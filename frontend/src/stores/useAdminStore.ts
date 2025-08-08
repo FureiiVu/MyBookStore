@@ -1,5 +1,7 @@
 import axiosInstance from "@/lib/axios";
 import { create } from "zustand";
+import { toast } from "react-hot-toast";
+
 import type { Book, Order } from "@/types";
 
 interface AdminStore {
@@ -32,6 +34,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         },
       });
       set({ isLoading: false });
+      toast.success("Thêm sách thành công");
       return response.data.book;
     } catch (error: any) {
       set({
@@ -55,6 +58,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         }
       );
       set({ isLoading: false });
+      toast.success("Cập nhật sách thành công");
       return response.data;
     } catch (error: any) {
       set({
@@ -69,7 +73,9 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       await axiosInstance.delete(`/admin/books/${bookId}`);
-      set({ isLoading: false });
+      const books = get().orders.filter((book) => book._id !== bookId);
+      set({ orders: books, isLoading: false });
+      toast.success("Xóa sách thành công");
     } catch (error: any) {
       set({
         error: error.response?.data?.message || "Failed to delete book",
@@ -83,7 +89,9 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       await axiosInstance.post("/admin/books/delete", { bookIds });
-      set({ isLoading: false });
+      const books = get().orders.filter((book) => !bookIds.includes(book._id));
+      set({ orders: books, isLoading: false });
+      toast.success("Xóa sách được chọn thành công");
     } catch (error: any) {
       set({
         error: error.response?.data?.message || "Failed to delete books",

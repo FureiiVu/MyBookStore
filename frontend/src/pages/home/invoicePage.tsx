@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const InvoicePage = () => {
-  const { order, isLoading, error, getOrder } = useOrderStore();
+  const { order, isLoading, error, getOrder, reset } = useOrderStore();
   const { user: userInfo, getUserById } = useUserStore();
   const navigate = useNavigate();
 
@@ -164,7 +164,10 @@ const InvoicePage = () => {
               {formatNumber(String(order.totalPrice))}
             </p>
             <Button
-              onClick={() => navigate("/")}
+              onClick={() => {
+                reset();
+                navigate("/");
+              }}
               className="p-4 mt-2 bg-[#3333CC] text-white font-medium rounded-lg hover:bg-[#2828a3] transition-colors"
             >
               Xác nhận

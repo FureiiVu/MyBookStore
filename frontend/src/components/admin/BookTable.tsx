@@ -1,6 +1,10 @@
 import { Edit2, Trash2, Image } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { formatNumber } from "@/middlewares/dataFormatter";
+import { useAdminStore } from "@/stores/useAdminStore";
+import { useBookStore } from "@/stores/useBookStore";
+
 import type { Book } from "@/types";
 
 interface BookTableProps {
@@ -16,6 +20,9 @@ export const BookTable = ({
   error,
   onEdit,
 }: BookTableProps) => {
+  const { deleteBook } = useAdminStore();
+  const { fetchBooks } = useBookStore();
+
   if (isLoading) {
     return <div className="text-center py-4">Đang tải dữ liệu...</div>;
   }
@@ -25,16 +32,16 @@ export const BookTable = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg border-2 shadow-sm">
       <table className="w-full">
         <thead className="bg-gray-50 border-b">
           <tr>
-            <th className="px-6 py-4 text-left">Ảnh</th>
+            <th className="px-6 py-4 text-center">Ảnh</th>
             <th className="px-6 py-4 text-left">Tên sách</th>
             <th className="px-6 py-4 text-left">Tác giả</th>
             <th className="px-6 py-4 text-left">Thể loại</th>
-            <th className="px-6 py-4 text-left">Giá</th>
-            <th className="px-6 py-4 text-left">Số lượng</th>
+            <th className="px-6 py-4 text-center">Giá</th>
+            <th className="px-6 py-4 text-center">Số lượng</th>
             <th className="px-6 py-4 text-center">Quản lý</th>
           </tr>
         </thead>
@@ -70,7 +77,14 @@ export const BookTable = ({
                   >
                     <Edit2 className="w-4 h-4" />
                   </Button>
-                  <Button variant="destructive" size="sm">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      await deleteBook(book._id);
+                      await fetchBooks();
+                    }}
+                  >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>

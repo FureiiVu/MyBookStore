@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
+import { Toaster } from "react-hot-toast";
 
 import HomePage from "./pages/home/homePage";
 import BookDetail from "./pages/home/bookDetail";
@@ -33,6 +34,8 @@ export default function App() {
 
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
+
+      <Toaster />
     </>
   );
 }

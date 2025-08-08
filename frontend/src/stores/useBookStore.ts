@@ -161,8 +161,9 @@ export const useBookStore = create<BookStore>((set, get) => ({
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.some((author) =>
           author.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+        ) ||
+        book.category.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-  }
+  },
 }));

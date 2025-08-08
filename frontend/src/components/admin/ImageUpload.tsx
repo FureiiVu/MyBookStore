@@ -1,17 +1,51 @@
 import { Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 
 interface ImageUploadProps {
   preview: string | null;
   onPreviewChange: (preview: string | null) => void;
+  onFileChange?: (file: File | null) => void;
 }
 
-export const ImageUpload = ({ preview, onPreviewChange }: ImageUploadProps) => {
+export const ImageUpload = ({
+  preview,
+  onPreviewChange,
+  onFileChange,
+}: ImageUploadProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      const url = URL.createObjectURL(file);
+      onPreviewChange(url);
+      onFileChange?.(file);
+    }
+  };
+
+  const handleRemove = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onPreviewChange(null);
+    onFileChange?.(null);
+  };
+
   return (
     <div className="flex items-start gap-4">
       <div className={`flex-1 ${preview ? "h-40" : "h-auto"}`}>
-        <div
-          className={`flex items-center justify-center border-2 border-dashed rounded-lg hover:bg-gray-50 transition-colors ${
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileSelect}
+          className="hidden"
+          id="file-input"
+        />
+        <label
+          htmlFor="file-input"
+          className={`flex items-center justify-center border-2 border-dashed rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${
             preview ? "h-full" : "p-4"
           }`}
         >
@@ -21,7 +55,7 @@ export const ImageUpload = ({ preview, onPreviewChange }: ImageUploadProps) => {
               Kéo thả hoặc click để tải ảnh lên
             </span>
           </div>
-        </div>
+        </label>
       </div>
       {preview && (
         <div className="w-32 h-40 relative">
@@ -35,7 +69,7 @@ export const ImageUpload = ({ preview, onPreviewChange }: ImageUploadProps) => {
             variant="destructive"
             size="icon"
             className="absolute -top-2 -right-2 w-6 h-6"
-            onClick={() => onPreviewChange(null)}
+            onClick={handleRemove}
           >
             <X className="w-4 h-4" />
           </Button>

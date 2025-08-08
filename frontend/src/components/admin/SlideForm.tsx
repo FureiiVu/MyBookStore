@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SelectField } from "./SelectField";
 import { ImageUpload } from "./ImageUpload";
 import type { Book } from "@/types";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface SlideFormProps {
   isOpen: boolean;
   onClose: () => void;
   mode: "create" | "edit";
   book?: Book;
-  onSubmit: (formData: FormData) => Promise<void>;
+  onSubmit: () => Promise<void>;
 }
 
 const initialFormState = {
@@ -28,14 +29,26 @@ const initialFormState = {
 
 const categoryOptions = [
   { value: "", label: "Chọn thể loại" },
-  { value: "Văn học", label: "Văn học" },
-  { value: "Kinh tế", label: "Kinh tế" },
-  { value: "Kỹ năng sống", label: "Kỹ năng sống" },
+  { value: "Tiểu thuyết", label: "Tiểu thuyết" },
+  { value: "Truyện tranh", label: "Truyện tranh" },
+  { value: "Truyện kinh dị", label: "Truyện kinh dị" },
+  { value: "Sách truyền cảm hứng", label: "Sách truyền cảm hứng" },
+  { value: "Sách bổ sung kiến thức", label: "Sách bổ sung kiến thức" },
 ];
 
-const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
+const SlideForm = ({
+  isOpen,
+  onClose,
+  mode,
+  book,
+  onSubmit,
+}: SlideFormProps) => {
   const [formData, setFormData] = useState(initialFormState);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+
+  const { createBook, updateBook } = useAdminStore();
 
   useEffect(() => {
     if (mode === "edit" && book) {
@@ -81,6 +94,46 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
     if (formData.author.length > 1) {
       const newAuthors = formData.author.filter((_, i) => i !== index);
       setFormData((prev) => ({ ...prev, author: newAuthors }));
+    }
+  };
+
+  const handleCoverFileChange = (file: File | null) => {
+    setCoverFile(file);
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const payload = new FormData();
+      payload.append("title", formData.title);
+      formData.author.forEach((author) => {
+        payload.append("author", author);
+      });
+      payload.append("description", formData.description);
+      payload.append("category", formData.category);
+      payload.append("price", formData.price);
+      payload.append("publisher", formData.publisher);
+      payload.append("publishDate", formData.publishDate);
+      payload.append("language", formData.language);
+      payload.append("pages", formData.pages);
+      payload.append("stock", formData.stock);
+
+      if (coverFile) {
+        payload.append("imageFile", coverFile);
+        payload.append("images", coverFile);
+      }
+
+      if (mode === "edit" && book) {
+        await updateBook(book._id, payload);
+        onSubmit();
+      } else {
+        await createBook(payload);
+        onSubmit();
+      }
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -256,6 +309,7 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
               <ImageUpload
                 preview={coverPreview}
                 onPreviewChange={setCoverPreview}
+                onFileChange={handleCoverFileChange}
               />
             </div>
 
@@ -275,15 +329,28 @@ const SlideForm = ({ isOpen, onClose, mode, book }: SlideFormProps) => {
         </div>
 
         {/* Footer - Fixed at bottom */}
-        <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Hủy
-          </Button>
-          <Button type="submit" form="bookForm">
-            {" "}
-            {/* Connect to form */}
-            {mode === "create" ? "Thêm sách" : "Cập nhật"}
-          </Button>
+        <div
+          className={`sticky bottom-0 bg-white border-t px-6 py-4 flex ${
+            isLoading ? "justify-between items-center" : "justify-end"
+          }`}
+        >
+          {isLoading && (
+            <div className="flex items-center gap-2 text-gray-600">
+              <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+              <span>
+                Đang {mode === "create" ? "thêm sách..." : "cập nhật sách..."}
+              </span>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Hủy
+            </Button>
+            <Button type="submit" form="bookForm" onClick={handleSubmit}>
+              {mode === "create" ? "Thêm sách" : "Cập nhật"}
+            </Button>
+          </div>
         </div>
       </div>
     </>

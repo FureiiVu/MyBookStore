@@ -1,4 +1,4 @@
-import { Search, Plus, Trash2, Filter } from "lucide-react";
+import { Search, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ActionBarProps {
@@ -16,15 +16,11 @@ export const ActionBar = ({ onSearch, onAdd }: ActionBarProps) => {
               type="text"
               placeholder="Tìm kiếm..."
               onChange={onSearch}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg bg-white"
             />
             <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="w-4 h-4" />
-          Lọc
-        </Button>
       </div>
       <div className="flex gap-2">
         <Button

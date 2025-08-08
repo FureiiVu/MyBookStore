@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axiosInstance from "@/lib/axios";
+import { toast } from "react-hot-toast";
 
 import type { Cart } from "@/types";
 
@@ -35,6 +36,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       await axiosInstance.post("/cart", { bookId, quantity });
+      toast.success("Thêm sách vào giỏ hàng thành công");
       await get().fetchCart();
     } catch (error: any) {
       set({
@@ -53,6 +55,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   deleteCartItem: async (itemId: string) => {
     try {
       await axiosInstance.delete(`/cart/${itemId}`);
+      toast.success("Xóa sách khỏi giỏ hàng thành công");
       await get().fetchCart();
     } catch (error: any) {
       set({

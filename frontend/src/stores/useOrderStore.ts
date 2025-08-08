@@ -9,6 +9,7 @@ interface OrderStore {
   error: string | null;
   addOrder: (orderItems: Object) => Promise<void>;
   getOrder: () => Promise<void>;
+  reset: () => void;
 }
 
 export const useOrderStore = create<OrderStore>((set) => ({
@@ -49,4 +50,6 @@ export const useOrderStore = create<OrderStore>((set) => ({
       set({ isLoading: false });
     }
   },
+
+  reset: () => set({ order: null, isLoading: false, error: null }),
 }));
