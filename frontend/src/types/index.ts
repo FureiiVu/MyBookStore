@@ -46,7 +46,7 @@ export interface OrderItem {
 
 export interface Order {
   _id: string;
-  user: string;
+  user: User;
   orderItems: OrderItem[];
   totalPrice: number;
   status: string;

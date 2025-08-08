@@ -6,7 +6,6 @@ import type { Book, Order } from "@/types";
 
 interface AdminStore {
   orders: Order[];
-  filteredOrders: Order[];
   isLoading: boolean;
   error: string | null;
   createBook: (formData: FormData) => Promise<Book>;
@@ -23,7 +22,6 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
   isLoading: false,
   error: null,
   orders: [],
-  filteredOrders: [],
 
   createBook: async (formData: FormData) => {
     set({ isLoading: true, error: null });
@@ -121,6 +119,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       await axiosInstance.delete(`/admin/orders/${orderId}`);
       const orders = get().orders.filter((order) => order._id !== orderId);
       set({ orders, isLoading: false });
+      toast.success("Xóa đơn hàng thành công");
     } catch (error: any) {
       set({
         error: error.response?.data?.message || "Failed to delete order",
@@ -138,6 +137,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         (order) => !orderIds.includes(order._id)
       );
       set({ orders, isLoading: false });
+      toast.success("Xóa các đơn hàng được chọn thành công");
     } catch (error: any) {
       set({
         error: error.response?.data?.message || "Failed to delete orders",
@@ -149,6 +149,14 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
 
   getOrdersByDateRange: (startDate: Date, endDate: Date) => {
     const { orders } = get();
+    console.log(
+      "Filtering orders from",
+      startDate,
+      "to",
+      endDate,
+      "with orders:",
+      orders
+    );
 
     const start = new Date(startDate);
     start.setHours(0, 0, 0, 0);
@@ -161,7 +169,6 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       return orderDate >= start && orderDate <= end;
     });
 
-    set({ filteredOrders: filtered });
     return filtered;
   },
 }));
