@@ -156,7 +156,7 @@ export const checkAdmin = (req, res) => {
 
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find().populate("user items.book");
+    const orders = await Order.find().populate("user orderItems.book");
     res.status(200).json({ orders });
   } catch (error) {
     console.error("Error in getting orders:", error);
