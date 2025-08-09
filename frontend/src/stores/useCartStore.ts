@@ -36,12 +36,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       await axiosInstance.post("/cart", { bookId, quantity });
-      toast.success("Thêm sách vào giỏ hàng thành công");
       await get().fetchCart();
     } catch (error: any) {
       set({
         error: error.response.data.message || "Failed to add item to cart",
       });
+      toast.error("Thêm sách vào giỏ hàng thất bại");
     } finally {
       set({ isLoading: false });
     }
@@ -61,6 +61,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       set({
         error: error.response.data.message || "Failed to remove item from cart",
       });
+      toast.error("Xóa sách khỏi giỏ hàng thất bại");
     } finally {
       set({ isLoading: false });
     }
@@ -76,6 +77,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         error:
           error.response.data.message || "Failed to remove all items from cart",
       });
+      toast.error("Xóa tất cả sách khỏi giỏ hàng thất bại");
     } finally {
       set({ isLoading: false });
     }

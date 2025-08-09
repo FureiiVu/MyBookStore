@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axiosInstance from "@/lib/axios";
 
 import type { Order } from "@/types";
+import toast from "react-hot-toast";
 
 interface OrderStore {
   order: Order | null;
@@ -26,6 +27,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
       set({
         error: error.response.data.message || "Failed to create order",
       });
+      toast.error("Thêm đơn hàng thất bại");
     } finally {
       set({ isLoading: false });
     }

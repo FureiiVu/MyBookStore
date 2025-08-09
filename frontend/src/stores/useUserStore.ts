@@ -21,8 +21,7 @@ export const useUserStore = create<UserStore>((set) => ({
   getUserById: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get("/user/profile"); // Sửa lại URL
-      console.log("User data fetched:", response.data.user);
+      const response = await axiosInstance.get("/user/profile");
       set({ user: response.data.user });
     } catch (error: any) {
       set({
@@ -37,11 +36,9 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/admin/check");
-      console.log("Admin check response:", response.data);
       const isAdmin = response.data.admin === true;
       set({ isAdmin });
     } catch (error: any) {
-      console.error("Error checking admin status:", error.response?.data);
       set({
         isAdmin: false,
         error: error.response?.data?.message || "Failed to check admin status",

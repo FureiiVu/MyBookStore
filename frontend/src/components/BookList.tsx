@@ -5,6 +5,10 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useBookStore } from "@/stores/useBookStore";
 import { formatNumber } from "@/middlewares/dataFormatter";
+import { usePagination } from "@/hooks/usePagination";
+
+import type { Book } from "@/types";
+import Pagination from "./Paginator";
 
 const BookList = () => {
   const { isLoading, error, fetchBooks, filterBooks, setSortOption } =
@@ -28,6 +32,17 @@ const BookList = () => {
   useEffect(() => {
     setSortOption(selected.value);
   }, [selected, setSortOption]);
+
+  const bookList = filterBooks();
+  const {
+    currentPage: bookPage,
+    setCurrentPage: setBookPage,
+    paginatedItems: paginatedBooks,
+    totalItems: totalBooks,
+  } = usePagination<Book>({
+    items: bookList,
+    itemsPerPage: 10,
+  });
 
   if (isLoading) {
     return (
@@ -88,22 +103,35 @@ const BookList = () => {
         </div>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {filterBooks().map((book) => (
+        {paginatedBooks.map((book) => (
           <Link to={`/book-detail/${book._id}`} key={book._id}>
-            <Card className="relative overflow-hidden rounded-lg shadow transition-all duration-300 hover:shadow-lg hover:scale-105 w-55 h-[330px]">
+            <Card className="relative overflow-hidden rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] bg-white group w-55 h-[320px]">
+              {/* Ảnh full card */}
               <img
                 src={book.coverImageUrl}
                 alt={book.title}
-                className="w-full h-full object-contain bg-gray-50"
+                className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
               />
-              <div className="absolute bottom-0 w-full bg-black/60 text-white text-sm p-2">
-                <div className="font-semibold truncate">{book.title}</div>
-                <div>{formatNumber(String(book.price))}</div>
+
+              {/* Overlay thông tin ở đáy ảnh */}
+              <div className="absolute bottom-0 left-0 w-full bg-black/60 text-white px-3 py-2">
+                <div className="font-semibold text-sm truncate group-hover:text-blue-300 transition-colors duration-200">
+                  {book.title}
+                </div>
+                <div className="text-base font-bold group-hover:text-blue-300">
+                  {formatNumber(String(book.price))}
+                </div>
               </div>
             </Card>
           </Link>
         ))}
       </div>
+      <Pagination
+        currentPage={bookPage}
+        totalItems={totalBooks}
+        itemsPerPage={10}
+        onPageChange={setBookPage}
+      />
     </div>
   );
 };

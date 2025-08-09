@@ -51,9 +51,7 @@ export const ImageUpload = ({
         >
           <div className="flex flex-col items-center gap-2">
             <Upload className="w-5 h-5 text-gray-400" />
-            <span className="text-sm text-gray-500">
-              Kéo thả hoặc click để tải ảnh lên
-            </span>
+            <span className="text-sm text-gray-500">Click để tải ảnh lên</span>
           </div>
         </label>
       </div>

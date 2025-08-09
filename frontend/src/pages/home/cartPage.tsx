@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ const CartPage = () => {
   } = useCartStore();
 
   const { addOrder } = useOrderStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCart();
@@ -160,24 +162,29 @@ const CartPage = () => {
                 {formatNumber(String(totalAmount))}
               </span>
             </div>
-            <Link to="/order">
-              <Button
-                className="w-full mt-2 text-white bg-[#5555DD] hover:bg-[#3333CC] transition-colors duration-200"
-                onClick={async () => {
-                  const payload = {
-                    orderItems: cart?.items.map((item) => ({
-                      bookId: item.book._id,
-                      quantity: item.quantity,
-                    })),
-                  };
+            <Button
+              className="w-full mt-2 text-white bg-[#5555DD] hover:bg-[#3333CC] transition-colors duration-200"
+              onClick={async () => {
+                const payload = {
+                  orderItems: cart?.items.map((item) => ({
+                    bookId: item.book._id,
+                    quantity: item.quantity,
+                  })),
+                };
 
-                  await addOrder(payload);
-                  await deleteAllCartItems();
-                }}
-              >
-                Thanh toán
-              </Button>
-            </Link>
+                if (payload.orderItems?.length === 0) {
+                  toast.error("Giỏ hàng trống, không thể thanh toán");
+                  return;
+                }
+
+                await addOrder(payload);
+                toast.success("Đặt hàng thành công");
+                await deleteAllCartItems();
+                navigate("/order");
+              }}
+            >
+              Thanh toán
+            </Button>
           </CardContent>
         </Card>
       </div>

@@ -39,6 +39,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to create book",
         isLoading: false,
       });
+      toast.error("Thêm sách mới thất bại");
       throw error;
     }
   },
@@ -63,6 +64,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to update book",
         isLoading: false,
       });
+      toast.error("Cập nhật đơn hàng thất bại");
       throw error;
     }
   },
@@ -79,6 +81,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to delete book",
         isLoading: false,
       });
+      toast.error("Xóa sách thất bại");
       throw error;
     }
   },
@@ -95,6 +98,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to delete books",
         isLoading: false,
       });
+      toast.error("Xóa sách được chọn thất bại");
       throw error;
     }
   },
@@ -109,6 +113,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to fetch orders",
         isLoading: false,
       });
+      toast.error("Lấy danh sách đơn hàng thất bại");
       throw error;
     }
   },
@@ -125,6 +130,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to delete order",
         isLoading: false,
       });
+      toast.error("Xóa đơn hàng thất bại");
       throw error;
     }
   },
@@ -143,20 +149,13 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         error: error.response?.data?.message || "Failed to delete orders",
         isLoading: false,
       });
+      toast.error("Xóa các đơn hàng được chọn thất bại");
       throw error;
     }
   },
 
   getOrdersByDateRange: (startDate: Date, endDate: Date) => {
     const { orders } = get();
-    console.log(
-      "Filtering orders from",
-      startDate,
-      "to",
-      endDate,
-      "with orders:",
-      orders
-    );
 
     const start = new Date(startDate);
     start.setHours(0, 0, 0, 0);

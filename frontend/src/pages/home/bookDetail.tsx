@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import { useBookStore } from "../../stores/useBookStore";
 import { useCartStore } from "@/stores/useCartStore";
@@ -80,7 +81,10 @@ const BookDetail = () => {
                 </p>
                 <Button
                   className="w-full md:w-auto p-6 text-base rounded-md bg-[#5555DD] text-white hover:bg-[#3333CC] transition-colors duration-200"
-                  onClick={() => addCartItem(String(id), 1)}
+                  onClick={() => {
+                    addCartItem(String(id), 1);
+                    toast.success("Thêm sách vào giỏ hàng thành công");
+                  }}
                 >
                   Thêm vào giỏ hàng
                 </Button>

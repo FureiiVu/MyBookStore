@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Loader2, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { SelectField } from "./SelectField";
 import { ImageUpload } from "./ImageUpload";
-import type { Book } from "@/types";
 import { useAdminStore } from "@/stores/useAdminStore";
+
+import type { Book } from "@/types";
 
 interface SlideFormProps {
   isOpen: boolean;
@@ -266,7 +268,7 @@ const SlideForm = ({
             {/* Details */}
             <div className="grid grid-cols-3 gap-6">
               <div className="space-y-1">
-                <label className="block text-sm font-medium">Giá (VNĐ)</label>
+                <label className="block text-sm font-medium">Giá (đ)</label>
                 <input
                   type="number"
                   name="price"
