@@ -1,5 +1,24 @@
 {
   "dependencies": {
     "react-hot-toast": "^2.5.2"
-  }
+  },
+  "name": "ct501h05-project-fureiivu",
+  "version": "1.0.0",
+  "description": "**Semester**: 3, **Academic year**: 2024-2025",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/24-25Sem3-Courses/ct501h05-project-FureiiVu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/24-25Sem3-Courses/ct501h05-project-FureiiVu/issues"
+  },
+  "homepage": "https://github.com/24-25Sem3-Courses/ct501h05-project-FureiiVu#readme"
 }

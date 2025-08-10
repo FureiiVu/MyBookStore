@@ -4,6 +4,8 @@ import { clerkMiddleware } from "@clerk/express";
 import fileUpload from "express-fileupload";
 import path from "path";
 import cors from "cors";
+import cron from "node-cron";
+import fs from "fs";
 
 import { connectDB } from "./lib/db.js";
 import userRoute from "./routes/user_route.js";
@@ -39,6 +41,22 @@ app.use(
   })
 ); // Middleware to handle file uploads
 
+// Cron job to clean "tmp" folder every 1 hour
+const tempDir = path.join(process.cwd(), "tmp");
+cron.schedule("0 * * * *", () => {
+  if (fs.existsSync(tempDir)) {
+    fs.readdir(tempDir, (err, files) => {
+      if (err) {
+        console.log("error", err);
+        return;
+      }
+      for (const file of files) {
+        fs.unlink(path.join(tempDir, file), (err) => {});
+      }
+    });
+  }
+});
+
 // Importing routes
 app.use("/user", userRoute);
 app.use("/auth", authRoute);
@@ -47,6 +65,13 @@ app.use("/books", bookRoute);
 app.use("/cart", cartRoute);
 app.use("/orders", orderRoute);
 app.use("/reviews", reviewRoute);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
